@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>gatekeeper-client.js</title>
+
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="audio.js"></script>
+    <script src="gatekeeper.js"></script>
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <input type="text" id="host" value="localhost" />
+    <button id="connect">connect</button>
+    <button id="disconnect" disabled>disconnect</button>
+
+    <br />
+    <br />
+
+    <div id="remote">
+      <span id="name"></span>
+      <table id="doors"></table>
+    </div>
+  </body>
+</html>
