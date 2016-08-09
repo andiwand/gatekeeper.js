@@ -1,43 +1,58 @@
+
 navigator.getUserMedia = (navigator.getUserMedia ||
                           navigator.webkitGetUserMedia ||
                           navigator.mozGetUserMedia ||
                           navigator.msGetUserMedia);
+
+window.AudioContext = window.AudioContext ||
+                      window.webkitAudioContext;
 
 var audio = audio || {};
 
 audio._source = null;
 audio._target = null;
 
-audio.open = function(bufferSize, inputChannels, outputChannels, onsource, ontarget) {
+audio.init = function() {
+
+};
+
+audio.openSpeaker = function(bufferSize, channels, ontarget) {
   var context = new window.AudioContext();
   var sampleRate = context.sampleRate;
 
   var output = context.destination;
-  var outputScript = context.createScriptProcessor(bufferSize, outputChannels, outputChannels);
-  outputScript.onaudioprocess = ontarget;
+  var script = context.createScriptProcessor(bufferSize, channels, channels);
+  script.onaudioprocess = ontarget;
 
-  outputScript.connect(output);
-  audio._target = outputScript;
+  script.connect(output);
+  audio._target = context;
+};
 
-  if (onsource) {
-    var success = function(mediaStream) {
-      var input = context.createMediaStreamSource(mediaStream);
-      var inputScript = context.createScriptProcessor(bufferSize, input.channelCount, inputChannels);
-      inputScript.onaudioprocess = onsource;
+audio.openMicrophone = function(bufferSize, channels, onsource) {
+  var success = function(stream) {
+    var context = new window.AudioContext();
+    var sampleRate = context.sampleRate;
 
-      input.connect(inputScript);
-      audio._source = input;
-    };
+    var input = context.createMediaStreamSource(stream);
+    var script = context.createScriptProcessor(bufferSize, input.channelCount, channels);
+    script.onaudioprocess = onsource;
 
-    var error = function(error) {
-      console.log("error capturing audio");
-    };
+    input.connect(script);
+    script.connect(context.destination);
+    audio._source = context;
+  };
 
-    navigator.getUserMedia({audio: true}, success, error);
-  }
-}
+  var error = function(error) {
+    console.log("error capturing audio");
+  };
 
-audio.close = function() {
-  audio._source.disconnect();
-  audio._target.disconnect();
-}
+  navigator.getUserMedia({audio: true}, success, error);
+};
+
+audio.closeSpeaker = function() {
+  audio._source.close();
+};
+
+audio.closeMicrophone = function() {
+  audio._target.close();
+};
