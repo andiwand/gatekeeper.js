@@ -1,8 +1,13 @@
 {
-  "name": "gatekeeper-client.js",
+  "name": "gatekeeper.js",
   "version": "0.0.1",
   "dependencies": {
-    "jquery": "~2.2.0"
+    "polymer": "Polymer/polymer#^1.0.0",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.0",
+    "iron-elements": "PolymerElements/iron-elements#^1.0.0",
+    "observe-elements": "git+https://github.com/andiwand/observe-elements.git",
+    "import-jquery": "git+https://github.com/andiwand/import-jquery.git",
+    "import-commons": "git+https://github.com/andiwand/import-commons.git"
   },
   "private": true
 }
