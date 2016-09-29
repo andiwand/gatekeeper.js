@@ -5,6 +5,7 @@
     "polymer": "Polymer/polymer#^1.0.0",
     "paper-elements": "PolymerElements/paper-elements#^1.0.0",
     "iron-elements": "PolymerElements/iron-elements#^1.0.0",
+    "app-elements": "PolymerElements/app-elements",
     "observe-elements": "git+https://github.com/andiwand/observe-elements.git",
     "import-jquery": "git+https://github.com/andiwand/import-jquery.git",
     "import-commons": "git+https://github.com/andiwand/import-commons.git"

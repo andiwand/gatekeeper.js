@@ -1,8 +1,0 @@
-{
-  "name": "gatekeeper-client.js",
-  "version": "0.0.1",
-  "dependencies": {
-    "jquery": "~2.2.0"
-  },
-  "private": true
-}
