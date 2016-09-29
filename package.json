@@ -1,0 +1,7 @@
+{
+  "name": "gatekeeper.js",
+  "version": "0.0.1",
+  "devDependencies": {
+    "polyserve": "~0.5.0"
+  }
+}
