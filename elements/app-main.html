@@ -1,10 +1,13 @@
 <link rel="import" href="../../polymer/polymer.html">
 <link rel="import" href="../../font-roboto/roboto.html">
 <link rel="import" href="../../iron-icons/iron-icons.html">
+<link rel="import" href="../../iron-pages/iron-pages.html">
 <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../paper-menu/paper-menu.html">
+<link rel="import" href="../../paper-item/paper-item.html">
 <link rel="import" href="../../app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../../observe-elements/observe-path.html">
 
 <dom-module id="app-main">
   <template>
@@ -15,16 +18,40 @@
       }
     </style>
 
+    <app-location use-hash-as-path route="{{route}}"></app-location>
+    <app-route route="{{route}}" pattern="/:page" data="{{pageData}}" tail="{{pageTail}}"></app-route>
+
+    <observe-path object="{{pageData}}" path="page" value="{{page}}"></observe-path>
+
     <app-toolbar>
       <paper-icon-button icon="menu" on-tap="toggleDrawer"></paper-icon-button>
       <span>gatekeeper.js</span>
     </app-toolbar>
+
     <app-drawer id="drawer" swipe-open>
-      <paper-menu>
-        <paper-item>Item 1</paper-item>
-        <paper-item>Item 2</paper-item>
+      <paper-menu selected="{{page}}" attr-for-selected="page">
+        <paper-item page="doors">Doors</paper-item>
+        <paper-item page="devices">Devices</paper-item>
+        <hr/>
+        <paper-item page="settings">Settings</paper-item>
+        <paper-item page="about">About</paper-item>
       </paper-menu>
     </app-drawer>
+
+    <iron-pages selected="{{page}}" attr-for-selected="page" main>
+       <div page="doors">
+         doors
+       </div>
+       <div page="devices">
+         devices
+       </div>
+       <div page="settings">
+         settings
+       </div>
+       <div page="about">
+         about
+       </div>
+    </iron-pages>
   </template>
 
   <script>
