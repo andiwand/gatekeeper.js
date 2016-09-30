@@ -1,25 +1,20 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
-    <title>gatekeeper-client.js</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
 
-    <script src="bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="audio.js"></script>
-    <script src="gatekeeper.js"></script>
+    <title>gatekeeper.js</title>
+
+    <script src="../../webcomponentsjs/webcomponents.js"></script>
+    <link rel="import" href="../../polymer/polymer.html">
+    <link rel="import" href="../elements/app-main.html">
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+
     <script src="script.js"></script>
   </head>
-  <body>
-    <input type="text" id="host" value="localhost" />
-    <button id="connect">connect</button>
-    <button id="disconnect" disabled>disconnect</button>
-
-    <br />
-    <br />
-
-    <div id="remote">
-      <span id="name"></span>
-      <table id="doors"></table>
-    </div>
+  <body unresolved>
+    <app-main></app-main>
   </body>
 </html>

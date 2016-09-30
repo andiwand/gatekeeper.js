@@ -7,6 +7,7 @@
     "iron-elements": "PolymerElements/iron-elements#^1.0.0",
     "app-elements": "PolymerElements/app-elements",
     "observe-elements": "git+https://github.com/andiwand/observe-elements.git",
+    "list-generic": "git+https://github.com/andiwand/list-generic.git",
     "import-jquery": "git+https://github.com/andiwand/import-jquery.git",
     "import-commons": "git+https://github.com/andiwand/import-commons.git"
   },
