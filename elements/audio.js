@@ -12,10 +12,6 @@ var audio = audio || {};
 audio._source = null;
 audio._target = null;
 
-audio.init = function() {
-
-};
-
 audio.openSpeaker = function(bufferSize, channels, ontarget) {
   var context = new window.AudioContext();
   var sampleRate = context.sampleRate;

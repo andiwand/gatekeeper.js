@@ -1,13 +1,19 @@
 <link rel="import" href="../../polymer/polymer.html">
-<link rel="import" href="../../font-roboto/roboto.html">
 <link rel="import" href="../../iron-icons/iron-icons.html">
 <link rel="import" href="../../iron-pages/iron-pages.html">
 <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../paper-menu/paper-menu.html">
 <link rel="import" href="../../paper-item/paper-item.html">
+<link rel="import" href="../../app-route/app-location.html">
+<link rel="import" href="../../app-route/app-route.html">
 <link rel="import" href="../../app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../app-layout/app-drawer/app-drawer.html">
 <link rel="import" href="../../observe-elements/observe-path.html">
+<link rel="import" href="../../list-generic/list-generic.html">
+<link rel="import" href="card-gatekeeper.html">
+<link rel="import" href="card-door.html">
+<script src="gatekeeper.js"></script>
+<script src="app.js"></script>
 
 <dom-module id="app-main">
   <template>
@@ -16,49 +22,93 @@
         background-color: #4285f4;
         color: #fff;
       }
+      app-drawer {
+        z-index: 10;
+      }
+      paper-menu a {
+        color: inherit;
+        text-decoration: none;
+        display: block;
+        padding: 0 16px;
+        line-height: 40px;
+      }
     </style>
 
-    <app-location use-hash-as-path route="{{route}}"></app-location>
-    <app-route route="{{route}}" pattern="/:page" data="{{pageData}}" tail="{{pageTail}}"></app-route>
+    <app-location use-hash-as-path="[[hash]]" route="{{route}}" id="location"></app-location>
+    <app-route route="{{route}}" pattern="/door/:id" data="{{doorData}}"></app-route>
+    <app-route route="{{route}}" pattern="/:page" data="{{pageData}}"></app-route>
 
-    <observe-path object="{{pageData}}" path="page" value="{{page}}"></observe-path>
+    <observe-path object="gatekeeper.app.STATE" path="gatekeepers" value="{{gatekeepers}}"></observe-path>
+    <observe-path object="gatekeeper.app.STATE" path="doors" value="{{doors}}"></observe-path>
 
-    <app-toolbar>
-      <paper-icon-button icon="menu" on-tap="toggleDrawer"></paper-icon-button>
-      <span>gatekeeper.js</span>
-    </app-toolbar>
+    <iron-pages selected="[[pageData.page]]" attr-for-selected="page" fallback-selection="root">
+      <div page="root">
+        <app-toolbar>
+          <paper-icon-button icon="menu" on-tap="toggleDrawer"></paper-icon-button>
+          gatekeeper
+        </app-toolbar>
 
-    <app-drawer id="drawer" swipe-open>
-      <paper-menu selected="{{page}}" attr-for-selected="page">
-        <paper-item page="doors">Doors</paper-item>
-        <paper-item page="devices">Devices</paper-item>
-        <hr/>
-        <paper-item page="settings">Settings</paper-item>
-        <paper-item page="about">About</paper-item>
-      </paper-menu>
-    </app-drawer>
+        <app-drawer id="drawer" swipe-open>
+          <app-toolbar>Menu</app-toolbar>
+          <paper-menu selected="[[pageData.page]]" attr-for-selected="page">
+            <!-- TODO: check if this is fast enougth for seo -->
+            <a page="doors" href$="[[href('/doors', hash)]]">Doors</a>
+            <a page="gatekeepers" href$="[[href('/gatekeepers', hash)]]">Gatekeepers</a>
+            <hr/>
+            <a page="settings" href$="[[href('/settings', hash)]]">Settings</a>
+            <a page="about" href$="[[href('/about', hash)]]">About</a>
+          </paper-menu>
+        </app-drawer>
 
-    <iron-pages selected="{{page}}" attr-for-selected="page" main>
-       <div page="doors">
-         doors
-       </div>
-       <div page="devices">
-         devices
-       </div>
-       <div page="settings">
-         settings
-       </div>
-       <div page="about">
-         about
-       </div>
+        <iron-pages selected="[[pageData.page]]" attr-for-selected="page">
+           <div page="doors">
+             <list-generic array="{{doors}}" element="card-door"></list-generic>
+           </div>
+           <div page="gatekeepers">
+             <list-generic array="{{gatekeepers}}" element="card-gatekeeper"></list-generic>
+           </div>
+           <div page="about">
+             about
+           </div>
+        </iron-pages>
+      </div>
+      <div page="door">
+        door
+      </div>
+      <div page="settings">
+        settings
+      </div>
     </iron-pages>
   </template>
 
   <script>
     Polymer({
-      is: "app-main",
+      is: 'app-main',
+      properties: {
+        hash: {
+          type: Boolean,
+          value: true
+        },
+        checkInterval: {
+          type: Number,
+          value: 200
+        }
+      },
+      ready: function() {},
+      attached: function() {
+        this._timer = setInterval(Platform.performMicrotaskCheckpoint, this.checkInterval);
+
+        gatekeeper.app.load();
+        this.set('route.path', '/doors');
+      },
+      detached: function() {
+        clearInterval(this._timer);
+      },
       toggleDrawer: function() {
         this.$.drawer.toggle();
+      },
+      href: function(path) {
+        return (this.hash ? '#' : '') + path;
       }
     });
   </script>

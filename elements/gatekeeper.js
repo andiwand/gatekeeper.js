@@ -1,89 +1,110 @@
 
-var gatekeeper = gatekeeper || {};
+var gatekeeper = function(host, port) {
+  this.onopened = function() {};
+  this.onerror = function(event) {};
+  this.onclosed = function() {};
+  this.oninfo = function() {};
+  this.onaudio = function() {};
+
+  this._host = host;
+  this._port = port || gatekeeper.PORT;
+  this._socket = null;
+  this._name = null;
+  this._doors = null;
+};
 
 gatekeeper.PORT = 12345;
 
-gatekeeper.onopened = null;
-gatekeeper.onerror = null;
-gatekeeper.onclosed = null;
-gatekeeper.oninfo = null;
-gatekeeper.onaudio = null;
+gatekeeper._STATE = {
+  discovery: {
+    started: false,
+    listeners: []
+  }
+};
 
-gatekeeper._socket = null;
-gatekeeper._name = null;
-gatekeeper._doors = null;
+gatekeeper.startDiscovery = function() {
+  gatekeeper._STATE.discovery.started = true;
+};
 
-gatekeeper.init = function() {
-  audio.init();
-}
+gatekeeper.stopDiscovery = function() {
+  gatekeeper._STATE.discovery.started = false;
+};
 
-gatekeeper.connect = function(host) {
-  if (gatekeeper.socket) return;
+gatekeeper._discovered = function(data) {
+  if (!gatekeeper._STATE.discovery.started) return;
+  gatekeeper._STATE.discovery.listeners.forEach(function(listener) {
+    listener(data);
+  });
+};
 
-  var socket = new WebSocket("ws://" + host + ":" + gatekeeper.PORT);
+gatekeeper.addDiscoveryListener = function(listener) {
+  gatekeeper._STATE.discovery.listeners.push(listener);
+};
+
+gatekeeper.prototype.connect = function() {
+  var socket = new WebSocket("ws://" + this._host + ":" + this._port);
   socket.onopen = function(event) {
-    gatekeeper._socket = socket;
+    this._socket = socket;
     socket.binaryType = "arraybuffer";
-    if (gatekeeper.onopened) gatekeeper.onopened();
+    this.onopened();
 
     infoRequest = {"type": "REQUEST_INFO"};
     socket.send(JSON.stringify(infoRequest));
-  };
+  }.bind(this);
   socket.onerror = function(event) {
-    if (gatekeeper.onerror) gatekeeper.onerror(event);
-  };
+    this.onerror(event);
+  }.bind(this);
   socket.onclose = function() {
-    if (!gatekeeper.socket) return;
-    gatekeeper.socket = null;
-    if (gatekeeper.onclosed) gatekeeper.onclosed();
-  };
+    if (!this.socket) return;
+    this.socket = null;
+    this.onclosed();
+  }.bind(this);
   socket.onmessage = function(message) {
     if (typeof message.data === "string") {
       packet = JSON.parse(message.data);
 
       if (packet.type === "RESPONSE_INFO") {
-        gatekeeper._name = packet.data.name;
-        gatekeeper._doors = packet.data.doors;
-        console.log(message.data);
-        if (gatekeeper.oninfo) gatekeeper.oninfo();
+        this._name = packet.data.name;
+        this._doors = packet.data.doors;
+        this.oninfo();
       }
     } else {
-      if (gatekeeper.onaudio) gatekeeper.onaudio(message.data);
+      this.onaudio(message.data);
     }
-  };
+  }.bind(this);
 };
 
-gatekeeper.getName = function() {
-  return gatekeeper._name;
+gatekeeper.prototype.getName = function() {
+  return this._name;
 };
 
-gatekeeper.getDoors = function() {
-  return gatekeeper._doors;
+gatekeeper.prototype.getDoors = function() {
+  return this._doors;
 };
 
-gatekeeper.unlock = function(door) {
-  if (!(door in gatekeeper._doors)) return;
+gatekeeper.prototype.unlock = function(door) {
+  if (!(door in this._doors)) return;
   unlockRequest = {"type": "REQUEST_UNLOCK", "data": {"door": door}};
-  gatekeeper._socket.send(JSON.stringify(unlockRequest));
+  this._socket.send(JSON.stringify(unlockRequest));
 };
 
-gatekeeper.intercomOpen = function(door) {
-  if (!(door in gatekeeper._doors)) return;
+gatekeeper.prototype.intercomOpen = function(door) {
+  if (!(door in this._doors)) return;
   intercomRequest = {"type": "REQUEST_INTERCOM", "data": {"door": door}};
-  gatekeeper._socket.send(JSON.stringify(intercomRequest));
+  this._socket.send(JSON.stringify(intercomRequest));
 };
 
-gatekeeper.intercomAudio = function(data) {
+gatekeeper.prototype.intercomAudio = function(data) {
   // TODO: check intercom open
-  gatekeeper._socket.send(data);
+  this._socket.send(data);
 };
 
-gatekeeper.intercomClose = function() {
+gatekeeper.prototype.intercomClose = function() {
   closeIntercom = {"type": "CLOSE_INTERCOM"};
-  gatekeeper._socket.send(JSON.stringify(closeIntercom));
+  this._socket.send(JSON.stringify(closeIntercom));
 };
 
-gatekeeper.close = function() {
-  if (!gatekeeper.socket) return;
-  gatekeeper.socket.close();
+gatekeeper.prototype.close = function() {
+  if (!this._socket) return;
+  this._socket.close();
 };
