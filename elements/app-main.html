@@ -4,6 +4,8 @@
 <link rel="import" href="../../paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../paper-menu/paper-menu.html">
 <link rel="import" href="../../paper-item/paper-item.html">
+<link rel="import" href="../../paper-input/paper-input.html">
+<link rel="import" href="../../paper-button/paper-button.html">
 <link rel="import" href="../../app-route/app-location.html">
 <link rel="import" href="../../app-route/app-route.html">
 <link rel="import" href="../../app-layout/app-toolbar/app-toolbar.html">
@@ -31,6 +33,20 @@
         display: block;
         padding: 0 16px;
         line-height: 40px;
+      }
+      list-generic {
+        --my-elements: { margin-bottom: 10px; };
+      }
+      #gatekeepers-page {
+        margin: 20px;
+      }
+      #gatekeeper-form {
+        background-color: white;
+        padding: 20px;
+        font-size: 1.2rem;
+        font-weight: 300;
+        box-shadow: rgba(0, 0, 0, 0.098) 0px 2px 4px,
+                    rgba(0, 0, 0, 0.098) 0px 0px 3px;
       }
     </style>
 
@@ -62,9 +78,16 @@
 
         <iron-pages selected="[[pageData.page]]" attr-for-selected="page">
            <div page="doors">
+             <!-- TODO: use dom-repeat -->
              <list-generic array="{{doors}}" element="card-door"></list-generic>
            </div>
-           <div page="gatekeepers">
+           <div id="gatekeepers-page" page="gatekeepers">
+             <div id="gatekeeper-form">
+               <paper-input label="Host" default=""></paper-input>
+               <paper-input label="Port" default=""></paper-input>
+               <paper-button>Save</paper-button>
+             </div>
+             <!-- TODO: use dom-repeat -->
              <list-generic array="{{gatekeepers}}" element="card-gatekeeper"></list-generic>
            </div>
            <div page="about">
@@ -99,7 +122,7 @@
         this._timer = setInterval(Platform.performMicrotaskCheckpoint, this.checkInterval);
 
         gatekeeper.app.load();
-        this.set('route.path', '/doors');
+        // this.set('route.path', '/doors'); // TODO: only if no path is set
       },
       detached: function() {
         clearInterval(this._timer);

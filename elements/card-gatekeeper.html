@@ -1,32 +1,34 @@
 <link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../iron-icons/iron-icons.html">
+<link rel="import" href="../../paper-icon-button/paper-icon-button.html">
 
 <dom-module id="card-gatekeeper">
-  <style>
-    :host {
-      display: block;
-      position: relative;
-      background-color: white;
-      padding: 20px;
-      font-size: 1.2rem;
-      font-weight: 300;
-      box-shadow: rgba(0, 0, 0, 0.098) 0px 2px 4px,
-                  rgba(0, 0, 0, 0.098) 0px 0px 3px;
-    }
-    .card-header {
-      margin-bottom: 10px;
-    }
-    .card-header h2 {
-      margin: 0;
-      font-size: 1.8rem;
-      font-weight: 300;
-    }
-  </style>
-
   <template>
+    <style>
+      :host {
+        display: block;
+        background-color: white;
+        padding: 20px;
+        font-size: 1.2rem;
+        font-weight: 300;
+        box-shadow: rgba(0, 0, 0, 0.098) 0px 2px 4px,
+                    rgba(0, 0, 0, 0.098) 0px 0px 3px;
+      }
+      .card-header {
+        margin-bottom: 10px;
+      }
+      .card-header h2 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 300;
+      }
+    </style>
+
     <div class="card-header layout horizontal">
-      <h2>{{data.name}}</h2>
+      <h2>[[_name(data.name)]]</h2>
+      <paper-icon-button icon="delete" on-tap="remove"></paper-icon-button>
     </div>
-    <p>{{data.host}}:{{data.port}}</p>
+    <p>[[data.host]]:[[data.port]]</p>
   </template>
 </dom-module>
 
@@ -38,6 +40,13 @@
         type: Object,
         notify: true
       }
+    },
+    _name: function(name) {
+      if (name) return name;
+      return "Unknown";
+    },
+    remove: function() {
+      gatekeeper.app.removeGatekeeper(this.data);
     }
   });
 </script>

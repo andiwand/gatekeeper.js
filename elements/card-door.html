@@ -1,28 +1,27 @@
 <link rel="import" href="../../polymer/polymer.html">
 
 <dom-module id="card-door">
-  <style>
-    :host {
-      display: block;
-      position: relative;
-      background-color: white;
-      padding: 20px;
-      font-size: 1.2rem;
-      font-weight: 300;
-      box-shadow: rgba(0, 0, 0, 0.098) 0px 2px 4px,
-                  rgba(0, 0, 0, 0.098) 0px 0px 3px;
-    }
-    .card-header {
-      margin-bottom: 10px;
-    }
-    .card-header h2 {
-      margin: 0;
-      font-size: 1.8rem;
-      font-weight: 300;
-    }
-  </style>
-
   <template>
+    <style>
+      :host {
+        display: block;
+        background-color: white;
+        padding: 20px;
+        font-size: 1.2rem;
+        font-weight: 300;
+        box-shadow: rgba(0, 0, 0, 0.098) 0px 2px 4px,
+                    rgba(0, 0, 0, 0.098) 0px 0px 3px;
+      }
+      .card-header {
+        margin-bottom: 10px;
+      }
+      .card-header h2 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 300;
+      }
+    </style>
+
     <div class="card-header layout horizontal">
       <h2>{{data.name}}</h2>
     </div>
